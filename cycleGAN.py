@@ -99,16 +99,13 @@ class cycleGAN(nn.Module):
             self.netD_B, self.real_B, self.fake_B)
         self.loss_D = self.loss_D_A + self.loss_D_B
 
-    def forward(self):
+    def process_one_input(self, x, training=True):
+        self.real_A = x['A'].to(self.device)
+        self.real_B = x['B'].to(self.device)
         self.fake_B = self.netG_A2B(self.real_A)
         self.rec_A = self.netG_B2A(self.fake_B)
         self.fake_A = self.netG_B2A(self.real_B)
         self.rec_B = self.netG_A2B(self.fake_A)
-
-    def process_one_input(self, x, training=True):
-        self.real_A = x['A'].to(self.device)
-        self.real_B = x['B'].to(self.device)
-        self.forward()
 
         if not training:
             self.calc_generator_loss()
