@@ -140,7 +140,7 @@ class cycleGAN(nn.Module):
                 float(self.loss_idt_A), float(self.loss_idt_B)]
         return ret
 
-    def save_current_batch(self, path, prefix):
+    def save_current_batch(self, path, prefix, start_id=0):
         if self.mode == "both_sides":
             img_names = ['real_A', 'real_B',
                          'fake_A', 'fake_B', 'rec_A', 'rec_B']
@@ -155,7 +155,7 @@ class cycleGAN(nn.Module):
             for i in range(imgs.shape[0]):
                 img = imgs[i].detach().cpu().numpy()
                 utils.savefig(img, os.path.join(
-                    path, prefix + '_' + str(i) + '_' + name))
+                    path, prefix + '_' + str(start_id + i) + '_' + name))
 
     def one_side_process(self, x):
         if self.mode == "A2B":

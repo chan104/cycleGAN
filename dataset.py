@@ -54,4 +54,4 @@ class ImageFolder(Dataset):
         return img
 
     def __len__(self):
-        return len(self.imagesA)
+        return len(self.images)

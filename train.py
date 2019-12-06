@@ -87,10 +87,10 @@ if __name__ == '__main__':
     parser.add_argument('--train_epochs', type=int, default=10)
     parser.add_argument('--start_epochs', type=int, default=0)
     parser.add_argument('--max_length', type=int, default=10000)
-    parser.add_argument('--save_freq', type=int, default=10)
-    parser.add_argument('--img_freq', type=int, default=5)
+    parser.add_argument('--save_freq', type=int, default=5)
+    parser.add_argument('--img_freq', type=int, default=1)
 
-    parser.add_argument('--scheduler_step_size', type=int, default=10)
+    parser.add_argument('--scheduler_step_size', type=int, default=20)
     parser.add_argument('--scheduler_gamma', type=float, default=0.3)
 
     parser.add_argument('--load_model', default=None)
