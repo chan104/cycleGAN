@@ -92,7 +92,6 @@ if __name__ == '__main__':
     parser.add_argument('--scheduler_gamma', type=float, default=0.3)
 
     parser.add_argument('--load_model', default=None)
-    parser.add_argument('--model_type', default='cycleGAN')
 
     parser.add_argument('--reset_optimizer', action='store_true')
 
@@ -117,16 +116,12 @@ if __name__ == '__main__':
                                   scheduler_gamma=args.scheduler_gamma,
                                   scheduler_step_size=args.scheduler_step_size)
     else:
-        if args.model_type.lower() == 'cyclegan':
-            model = cycleGAN(3, 3, device, lambda_A=args.lambda_A,
-                             lambda_B=args.lambda_B,
-                             lambda_idt=args.lambda_idt,
-                             lr=args.lr, beta1=args.beta1,
-                             scheduler_gamma=args.scheduler_gamma,
-                             scheduler_step_size=args.scheduler_step_size)
-        else:
-            print("unknown model")
-            exit()
+        model = cycleGAN(3, 3, device, lambda_A=args.lambda_A,
+                         lambda_B=args.lambda_B,
+                         lambda_idt=args.lambda_idt,
+                         lr=args.lr, beta1=args.beta1,
+                         scheduler_gamma=args.scheduler_gamma,
+                         scheduler_step_size=args.scheduler_step_size)
     model.to(device)
     loss_record = []
 
@@ -140,13 +135,11 @@ if __name__ == '__main__':
         loss_record.append(loss)
         if (epoch + 1) % args.save_freq == 0:
             torch.save(model, os.path.join(args.save_path, args.save_prefix +
-                                           '_' + args.model_type + '_epoch_' +
-                                           str(epoch + 1) + '.model'))
+                                           '_epoch_' + str(epoch + 1) + '.model'))
         if (epoch + 1) % args.img_freq == 0:
             model.save_current_batch(args.save_path, str(epoch + 1))
     Logger("done")
     Logger(time.asctime())
     Logger(loss_record)
-    # torch.save(model, os.path.join(args.save_path, args.save_prefix + '_' +
-    #                                args.model_type + '_epoch_' +
-    #                                str(epoch + 1) + '.model'))
+    # torch.save(model, os.path.join(args.save_path, args.save_prefix +
+    #                                '_epoch_' + str(epoch + 1) + '.model'))
