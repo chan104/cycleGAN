@@ -107,6 +107,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    if not os.path.exists(args.save_path):
+        os.makedirs(args.save_path)
+
     Logger = utils.Logger(os.path.join(
         args.save_path, args.save_prefix + '.log'))
 
