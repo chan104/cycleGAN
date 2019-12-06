@@ -7,13 +7,15 @@ import utils
 from cycleGAN import cycleGAN
 
 import dataset
-
+from PIL import Image
 from tqdm import tqdm
 import argparse
 
 
 def dataloader(batch_size, data_root, shuffle=False, num_workers=8):
     transform_train = transforms.Compose([
+        transforms.Resize(286, Image.BICUBIC),
+        transforms.RandomCrop(256),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
@@ -98,10 +100,9 @@ if __name__ == '__main__':
     parser.add_argument('--ngf', type=int, default=64)
     parser.add_argument('--ndf', type=int, default=64)
     parser.add_argument('--g_blocks', type=int, default=9)
-    parser.add_argument('--d_blocks', type=int, default=4)
+    parser.add_argument('--n_layers', type=int, default=3)
     parser.add_argument('--use_dropout', action='store_true')
     parser.add_argument('--g_n_downsampling', type=int, default=2)
-    parser.add_argument('--d_n_downsampling', type=int, default=2)
     parser.add_argument('--dropout', type=float, default=0.5)
 
     args = parser.parse_args()
@@ -132,9 +133,8 @@ if __name__ == '__main__':
                          scheduler_gamma=args.scheduler_gamma,
                          scheduler_step_size=args.scheduler_step_size,
                          ngf=args.ngf, ndf=args.ndf, g_blocks=args.g_blocks,
-                         d_blocks=args.d_blocks, use_dropout=args.use_dropout,
+                         n_layers=args.n_layers, use_dropout=args.use_dropout,
                          g_n_downsampling=args.g_n_downsampling,
-                         d_n_downsampling=args.d_n_downsampling,
                          dropout=args.dropout)
     model.to(device)
     loss_record = []

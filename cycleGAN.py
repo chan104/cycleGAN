@@ -11,9 +11,8 @@ from adam import Adam
 class cycleGAN(nn.Module):
     def __init__(self, A_channels, B_channels, device, lr=0.0002, beta1=0.5,
                  lambda_A=10, lambda_B=10, lambda_idt=0.5, scheduler_gamma=0.3,
-                 scheduler_step_size=5, ngf=64, ndf=64, g_blocks=9, d_blocks=4,
-                 use_dropout=True, g_n_downsampling=2, d_n_downsampling=2,
-                 dropout=0.5):
+                 scheduler_step_size=5, ngf=64, ndf=64, g_blocks=9, n_layers=3,
+                 use_dropout=False, g_n_downsampling=2, dropout=0.5):
         super(cycleGAN, self).__init__()
         self.netG_A2B = Generator(A_channels, B_channels, ngf=ngf, n_blocks=g_blocks,
                                   use_dropout=use_dropout,
@@ -21,12 +20,10 @@ class cycleGAN(nn.Module):
         self.netG_B2A = Generator(B_channels, A_channels, ngf=ngf, n_blocks=g_blocks,
                                   use_dropout=use_dropout,
                                   n_downsampling=g_n_downsampling, dropout=dropout)
-        self.netD_A = Discriminator(A_channels, ndf=ndf, n_downsampling=d_n_downsampling,
-                                    n_blocks=d_blocks, use_dropout=use_dropout,
-                                    dropout=dropout)
-        self.netD_B = Discriminator(B_channels, ndf=ndf, n_downsampling=d_n_downsampling,
-                                    n_blocks=d_blocks, use_dropout=use_dropout,
-                                    dropout=dropout)
+        self.netD_A = Discriminator(A_channels, ndf=ndf, n_layers=n_layers,
+                                    use_dropout=use_dropout, dropout=dropout)
+        self.netD_B = Discriminator(B_channels, ndf=ndf, n_layers=n_layers,
+                                    use_dropout=use_dropout, dropout=dropout)
 
         self.lambda_A = lambda_A
         self.lambda_B = lambda_B
@@ -37,7 +34,7 @@ class cycleGAN(nn.Module):
         self.criterionCycle = torch.nn.L1Loss()
         self.criterionIdt = torch.nn.L1Loss()
 
-        self.reset_optimizer(lr=lr, beta1=beta1, scheduler_gamma=0.3,
+        self.reset_optimizer(lr=lr, beta1=beta1, scheduler_gamma=scheduler_gamma,
                              scheduler_step_size=scheduler_step_size)
         self.mode = "both_sides"
 
