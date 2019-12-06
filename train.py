@@ -95,6 +95,15 @@ if __name__ == '__main__':
 
     parser.add_argument('--reset_optimizer', action='store_true')
 
+    parser.add_argument('--ngf', type=int, default=64)
+    parser.add_argument('--ndf', type=int, default=64)
+    parser.add_argument('--g_blocks', type=int, default=9)
+    parser.add_argument('--d_blocks', type=int, default=4)
+    parser.add_argument('--use_dropout', action='store_true')
+    parser.add_argument('--g_n_downsampling', type=int, default=2)
+    parser.add_argument('--d_n_downsampling', type=int, default=2)
+    parser.add_argument('--dropout', type=float, default=0.5)
+
     args = parser.parse_args()
 
     Logger = utils.Logger(os.path.join(
@@ -121,7 +130,12 @@ if __name__ == '__main__':
                          lambda_idt=args.lambda_idt,
                          lr=args.lr, beta1=args.beta1,
                          scheduler_gamma=args.scheduler_gamma,
-                         scheduler_step_size=args.scheduler_step_size)
+                         scheduler_step_size=args.scheduler_step_size,
+                         ngf=args.ngf, ndf=args.ndf, g_blocks=args.g_blocks,
+                         d_blocks=args.d_blocks, use_dropout=args.use_dropout,
+                         g_n_downsampling=args.g_n_downsampling,
+                         d_n_downsampling=args.d_n_downsampling,
+                         dropout=args.dropout)
     model.to(device)
     loss_record = []
 
