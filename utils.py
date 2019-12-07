@@ -1,12 +1,13 @@
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 import numpy as np
 
 
 def savefig(img, path):
     img = (img + 1) / 2
     img = np.moveaxis(img, 0, 2)
-    plt.imshow(img)
-    plt.savefig(path)
+    mpimg.imsave(path, img)
+
 
 
 def plot(img):
