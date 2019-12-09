@@ -11,8 +11,9 @@ from adam import Adam
 class cycleGAN(nn.Module):
     def __init__(self, A_channels, B_channels, device, lr=0.0002, beta1=0.5,
                  lambda_A=10, lambda_B=10, lambda_idt=0.5, scheduler_gamma=0.3,
-                 scheduler_step_size=5, ngf=64, ndf=64, g_blocks=9, n_layers=3,
-                 use_dropout=False, g_n_downsampling=2, dropout=0.5):
+                 scheduler_step_size=20, ngf=64, ndf=64, g_blocks=9, n_layers=3,
+                 use_dropout=False, g_n_downsampling=2, dropout=0.5,
+                 scheduler_type='StepLR'):
         super(cycleGAN, self).__init__()
         self.netG_A2B = Generator(A_channels, B_channels, ngf=ngf, n_blocks=g_blocks,
                                   use_dropout=use_dropout,
@@ -35,11 +36,12 @@ class cycleGAN(nn.Module):
         self.criterionIdt = torch.nn.L1Loss()
 
         self.reset_optimizer(lr=lr, beta1=beta1, scheduler_gamma=scheduler_gamma,
-                             scheduler_step_size=scheduler_step_size)
+                             scheduler_step_size=scheduler_step_size,
+                             scheduler_type=scheduler_type)
         self.mode = "both_sides"
 
     def reset_optimizer(self, lr=0.0002, beta1=0.5, scheduler_gamma=0.3,
-                        scheduler_step_size=5):
+                        scheduler_step_size=5, scheduler_type='StepLR'):
         self.optimizer_G = Adam(list(self.netG_A2B.parameters()) +
                                 list(self.netG_B2A.parameters()),
                                 lr=lr, betas=(beta1, 0.999))
@@ -51,9 +53,16 @@ class cycleGAN(nn.Module):
         self.optimizers.append(self.optimizer_G)
         self.optimizers.append(self.optimizer_D)
 
-        self.schedulers = [lr_scheduler.StepLR(
-            optimizer, scheduler_step_size, gamma=scheduler_gamma)
-            for optimizer in self.optimizers]
+        if scheduler_type == 'StepLR':
+            self.schedulers = [lr_scheduler.StepLR(
+                optimizer, scheduler_step_size, gamma=scheduler_gamma)
+                for optimizer in self.optimizers]
+        elif scheduler_type == 'linear_decay':
+            self.schedulers = [lr_scheduler.LambdaLR(
+                optimizer, utils.Linear_decay(scheduler_step_size))
+                for optimizer in self.optimizers]
+        else:
+            raise Exception('unknown scheduler type')
 
     def criterionGAN(self, out, label):
         if label:

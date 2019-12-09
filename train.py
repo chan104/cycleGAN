@@ -104,6 +104,7 @@ if __name__ == '__main__':
     parser.add_argument('--use_dropout', action='store_true')
     parser.add_argument('--g_n_downsampling', type=int, default=2)
     parser.add_argument('--dropout', type=float, default=0.5)
+    parser.add_argument('--scheduler_type', default="StepLR")
 
     args = parser.parse_args()
 
@@ -138,7 +139,7 @@ if __name__ == '__main__':
                          ngf=args.ngf, ndf=args.ndf, g_blocks=args.g_blocks,
                          n_layers=args.n_layers, use_dropout=args.use_dropout,
                          g_n_downsampling=args.g_n_downsampling,
-                         dropout=args.dropout)
+                         dropout=args.dropout, scheduler_type=args.scheduler_type)
     model.to(device)
     loss_record = []
 
