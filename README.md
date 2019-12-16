@@ -14,6 +14,14 @@ use linear decay instead. LR is unchanged for first scheduler_step_size then dec
 python train.py --dataroot ../project_data/horse2zebra --save_path ../project_runs/horse2zebra_linear --scheduler_step_size 50 --train_epochs 100 --scheduler_type linear_decay
 ```
 
+running test
+```
+python test.py --dataroot ../project_data/horse2zebra/testA --save_path ../project_runs/horse2zebra/ --load_model ../project_runs/horse2zebra/project_epoch_15.model --mode A2B
+```
+
+
+The dataset should be unpaired. The folder should contain trainA, trainB, testA, testB. Most of datasets were obtained using the script in https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix.
+
 dataroot: data folder which contains trainA and trainB
 
 batch_size: should be 1 otherwise there is not enough RAM
